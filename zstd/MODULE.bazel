@@ -1,0 +1,83 @@
+module(
+    name = "demo-zstd",
+    version = "0.0.0",
+    compatibility_level = 0,
+    bazel_compatibility = [">=8.0.0"]
+)
+
+## bcr:
+bazel_dep(name = "platforms",    version = "0.0.11")
+bazel_dep(name = "bazel_skylib", version = "1.7.1")
+bazel_dep(name = "rules_cc",     version = "0.1.1")
+
+## obazl:
+bazel_dep(name = "rules_ocaml", version = "3.0.0.dev")
+bazel_dep(name = "tools_opam",  version = "1.0.0.dev")
+bazel_dep(name = "tools_obazl", version = "3.0.0.dev",
+          repo_name = "obazl")
+
+bazel_dep(name = "zstd", version = "1.5.5")
+
+TOOLCHAIN = "global"
+OVERSION = "5.3.0"
+
+opam = use_extension("@tools_opam//extensions:opam.bzl", "opam")
+opam.deps(
+    # toolchain = TOOLCHAIN # default: "xdg"
+    # ocaml_version = OVERSION, # default "5.3.0"
+    # opam_version = "2.3.0",   # default: "2.3.0"
+    # debug = 2,
+    # verbosity = 1,
+    # opam_verbosity = 0,
+    pkgs = {
+        "integers": ""
+    },
+)
+use_repo(opam, "opam", "opam.ocamlsdk")
+use_repo(opam, "opam.integers")
+
+register_toolchains(
+    "@opam.ocamlsdk//toolchain/selectors/local:all",
+    "@opam.ocamlsdk//toolchain/profiles:all",
+)
+
+bazel_dep(name = "rules_ctypes", version = "0.23.0.dev")
+use_repo(opam, "opam.ctypes", "opam.ctypes-foreign")
+
+opam_dev = use_extension("@tools_opam//extensions:opam.bzl",
+    "opam", dev_dependency = True)
+opam_dev.deps(
+    # debug = 2,
+    # verbosity = 2,
+    # opam_verbosity = 2,
+    pkgs = {
+        "extlib": "",
+    },
+    ocaml_version = OVERSION,
+    opam_version = "2.3.0",
+    toolchain = TOOLCHAIN
+)
+use_repo(opam_dev, "opam.extlib")
+
+#### PoC demo only. To use the a local system library,
+#### pass --//stubs:local
+new_local_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:local.bzl", "new_local_repository")
+
+#### Edit this target to point to your system libzstd.a.
+#### In a future version this will be replaced with some
+#### kind of pkg_config rule that does all this automatically.
+new_local_repository(
+    name = "local.zstd",
+    path = "/opt/homebrew/Cellar/zstd/1.5.5",
+    build_file_content = """
+load("@rules_cc//cc:defs.bzl", "cc_import")
+cc_import(
+    name = "zstd",
+    hdrs = ["include/zstd.h"],
+    includes = ["include"],
+    static_library = "lib/libzstd.a",
+    visibility = ["//visibility:public"]
+)
+    """
+)
+

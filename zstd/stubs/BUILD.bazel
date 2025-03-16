@@ -1,0 +1,30 @@
+load("@bazel_skylib//rules:common_settings.bzl", "bool_flag")
+load("@rules_ctypes//build/rules:ctypes.bzl", "ctypes_module")
+
+## See MODULES.bazel for configuration of local libzstd.a
+bool_flag( name = "local", build_setting_default = False)
+config_setting(name = "local?",
+               flag_values = {":local": str(True)})
+
+##############
+ctypes_module(
+    name = "zstd",  # == <api_stem>
+    api_name = "zstd_api",
+    ## default wrapper: no wrapper
+    ## this attr is just for dune compatibility
+    # wrapper = "C",  # embedded in <api_name>.ml
+    ## default types_module: <api_stem>_Types
+    # types_module = "Types_generated",
+    ## default functions module: <api_stem>_Functions
+    # functions_module = "Functions_generated",
+    functors = {"type_description.ml": "Types",
+                "function_description.ml": "Functions"},
+    cclibs      = select({
+        ":local?": ["@local.zstd//:zstd"],
+        "//conditions:default": ["@zstd"]
+    }),
+    cchdrs      = select({
+        ":local?": ["include/zstd.h"],
+        "//conditions:default": ["zstd.h"]
+    }),
+)

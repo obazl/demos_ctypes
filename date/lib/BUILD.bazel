@@ -1,0 +1,25 @@
+load("@rules_ctypes//build/rules:ctypes.bzl", "ctypes_module")
+# load(
+#     "@rules_ocaml//build:rules.bzl",
+#     "ocaml_binary",
+#     "ocaml_library",
+#     "ocaml_module",
+#     "ocaml_test"
+# )
+
+package(default_visibility = ["//visibility:public"])
+
+# OPTS = ["-w", "@1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40"]
+
+# DEPS = ["@opam.ctypes//lib",
+#         "@opam.ctypes-foreign//lib",
+#         "@opam.ctypes//stubs/lib"]
+
+##############
+ctypes_module(
+    name = "date",
+    # api_name = "date_stubs",
+    functors = {"date_types.ml": "Types",
+                "date_functions.ml": "DateFunctions"},
+    cchdrs   = ["<time.h>"],
+)

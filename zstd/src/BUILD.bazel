@@ -1,0 +1,35 @@
+load("@rules_ocaml//build:rules.bzl",
+     "ocaml_library",
+     "ocaml_ns",
+     "ocaml_module",
+     "ocaml_signature",
+)
+
+OPTS = [] # "-w", "-50"] # "-unexpected-docstring"
+
+#################
+ocaml_library(
+    name       = "zstd",
+    manifest = [":Zstd"],
+    visibility = ["//visibility:public"],
+)
+
+ocaml_signature(
+    name          = "Zstd_cmi",
+    src           = "zstd.mli",
+    opts          = OPTS,
+    deps          = [
+        # "//stubs:zstd_stubs" # dune
+        "//stubs:zstd_api" # obazl: name configurable
+    ]
+)
+
+ocaml_module(
+    name   = "Zstd",
+    struct = "zstd.ml",
+    opts   = OPTS,
+    deps   = [
+        # "//stubs:zstd_stubs" # dune
+        "//stubs:zstd_api" # obazl: name configurable
+    ]
+)

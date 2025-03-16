@@ -1,0 +1,19 @@
+load("@rules_ocaml//build:rules.bzl",
+     "ocaml_module", "ocaml_test")
+
+#################
+ocaml_test(
+    name     = "test",
+    main     = "Test",
+    timeout  = "short",
+)
+
+ocaml_module(
+    name   = "Test",
+    struct = "test.ml",
+    deps   = [
+        "@opam.extlib//lib",
+        "@opam.ocamlsdk//unix/lib",
+        "//src:zstd",
+    ]
+)

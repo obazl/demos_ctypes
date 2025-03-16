@@ -1,0 +1,3 @@
+= ctypes demos
+
+Run each demo from its directory.  See the README file in each demo directory.

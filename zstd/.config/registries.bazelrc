@@ -1,0 +1,3 @@
+# local registry
+common --registry=file:///Users/gar/obazl/registry
+

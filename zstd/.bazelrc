@@ -1,0 +1,9 @@
+try-import .config/registries.bazelrc
+
+common --registry=https://raw.githubusercontent.com/obazl/registry/main/
+common --registry=https://bcr.bazel.build
+
+try-import %workspace%/.config/user.bazelrc
+
+common:showpp --subcommands=pretty_print
+test:showpp  --test_output=all

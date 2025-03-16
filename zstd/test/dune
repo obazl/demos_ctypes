@@ -1,0 +1,4 @@
+(test
+ (name test)
+ (modes byte_complete native)
+ (libraries extlib unix zstd))
