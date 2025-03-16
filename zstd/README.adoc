@@ -4,17 +4,21 @@ Based on https://github.com/ygrek/ocaml-zstd[ocaml-zstd]. Modified to demonstrat
 
 
 By default, obtains Bazel module `zstd` from the Bazel Central
- Registry, which builds `libzstd.a`.  In MODULE.bazel:
+ Registry, which builds `libzstd.a`.  In link:MODULE.bazel[MODULE.bazel]:
 
     bazel_dep(name = "zstd", version = "1.5.5")
 
-To build using a precompiled system library, edit the ‘new_local_repository` directive
+To build using a precompiled system library, edit the `new_local_repository` directive
  at the bottom of link:MODULE.bazel[MODULE.bazel], and pass
  `--//stubs:local‘, e.g.
 
     $ bazel test test --//stubs:local
 
-To see what Bazel does, first run `source ../tools/source.me`. This
+NOTE: For now this use of a local system lib is just Proof-of-Concept.
+A future enhancement will automate this, by defining some kind of
+`pkg_config` module extension.
+
+To see what Bazel does, first source link:../tools/source.me[../tools/source.me] (i.e. `$ source ../tools/source.me`). This
 defines an alias, `bl` (“browse log”), which allows you to easily
 browse the Bazel command log after you run a Bazel command. Then when
 you run a command, pass `--config=showpp`; this enables the `showpp`
@@ -29,12 +33,9 @@ You can also use `aquery` to tell Bazel to show commands without actually runnin
 
 == The `ctypes_module` rule
 
-`ctypes_module` is a macro that expands to a dozen or so targets. See https://github.com/obazl/rules_ctypes[rules_ctypes] for more information.
-
-The main build target is set by the `api_name` attribute; in this case,
-`zstd_api`:
-
-    $ bazel build stubs:zstd_api
+`ctypes_module` is a macro that expands to nearly two dozen targets.
+See https://github.com/obazl/rules_ctypes[rules_ctypes] for more
+information.
 
 To view the entire expansion:
 
@@ -43,6 +44,11 @@ To view the entire expansion:
 You can also see the expansion of a single target:
 
     $ bazel cquery stubs:zstd_types_wrapper --output=build
+
+The main build target is set by the `api_name` attribute; in this case,
+`zstd_api`:
+
+    $ bazel build stubs:zstd_api
 
 Any of the generated targets can be built:
 
@@ -56,9 +62,16 @@ To see a list of files generated when targets in `//stubs` are built:
 == local system lib
 
 Ends up in `external/+_repo_rules+local.zstd/lib/libzstd.a‘ which
-indicates it was made by a repository_rule. Inspect that dir and
-you’ll see its all symlinks to the sys lib; e.g.
+indicates it was made by a repository_rule.
 
-    /opt/homebrew/Cellar/zstd/1.5.5
+Inspect `external/+_repo_rules+local.zstd`
+you’ll see it contains symlinks to the sys lib installation:
+
+----
+ls -l `bazel info output_base`/external/+_repo_rules+local.zstd/
+...
+lib -> /opt/homebrew/Cellar/zstd/1.5.5/lib
+...
+----
 
 
