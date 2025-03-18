@@ -1,9 +1,10 @@
 open Ctypes
 
-(* obazl: *)
-module Types = Type_description.Types(Zstd_CtypesTYPE)
 (* dune: *)
 (* module Types = Types_generated *)
+
+(* obazl: *)
+module Types = Zstd_types.Types(Zstd_CtypesTYPE)
 
 module Functions (F : Cstubs.FOREIGN) = struct
   open F

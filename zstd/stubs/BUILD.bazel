@@ -17,8 +17,10 @@ ctypes_module(
     # types_module = "Types_generated",
     ## default functions module: <api_stem>_Functions
     # functions_module = "Functions_generated",
-    functors = {"type_description.ml": "Types",
-                "function_description.ml": "Functions"},
+    # functors = {"type_description.ml": "Types",
+    #             "function_description.ml": "Functions"},
+    functors = {"zstd_types.ml": "Types",
+                "zstd_functions.ml": "Functions"},
     cclibs      = select({
         ":local?": ["@local.zstd//:zstd"],
         "//conditions:default": ["@zstd"]

@@ -7,10 +7,10 @@
   (headers (include "zstd.h"))
   (type_description
    (instance Types)
-   (functor Type_description))
+   (functor Zstd_types))
   (function_description
    (concurrency unlocked)
    (instance Functions)
-   (functor Function_description))
+   (functor Zstd_functions))
   (generated_types Types_generated)
   (generated_entry_point C)))
