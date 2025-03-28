@@ -59,23 +59,41 @@ use_repo(opam_dev, "opam.extlib")
 
 #### PoC demo only. To use the a local system library,
 #### pass --//stubs:local
-new_local_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:local.bzl", "new_local_repository")
+# new_local_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:local.bzl", "new_local_repository")
 
 #### Edit this target to point to your system libzstd.a.
 #### In a future version this will be replaced with some
 #### kind of pkg_config rule that does all this automatically.
-new_local_repository(
-    name = "local.zstd",
-    path = "/opt/homebrew/Cellar/zstd/1.5.5",
-    build_file_content = """
-load("@rules_cc//cc:defs.bzl", "cc_import")
-cc_import(
-    name = "zstd",
-    hdrs = ["include/zstd.h"],
-    includes = ["include"],
-    static_library = "lib/libzstd.a",
-    visibility = ["//visibility:public"]
-)
-    """
-)
+# new_local_repository(
+#     name = "local.zstd",
+#     path = "/opt/homebrew/Cellar/zstd/1.5.5",
+#     #linux: path = "/usr/",
+#     build_file_content = """
+# load("@rules_cc//cc:defs.bzl", "cc_import")
+
+## linux:
+# cc_import(
+#     name = "zstd",
+#     name = "zstd.lib",
+#     static_library = "lib/x86_64-linux-gnu/libzstd.a",
+#     visibility = ["//visibility:public"]
+# )
+# cc_import(
+#     name = "zstd.hdr",
+#     hdrs = ["include/zstd.h"],
+#     includes = ["include"],
+#     static_library = "lib/libzstd.a",
+#     visibility = ["//visibility:public"]
+# )
+
+# macos:
+# cc_import(
+#     name = "zstd",
+#     hdrs = ["include/zstd.h"],
+#     includes = ["include"],
+#     static_library = "lib/libzstd.a",
+#     visibility = ["//visibility:public"]
+# )
+#     """
+# )
 
