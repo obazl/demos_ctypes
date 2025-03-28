@@ -5,7 +5,7 @@ load("@rules_ocaml//build:rules.bzl",
      "ocaml_signature",
 )
 
-OPTS = [] # "-w", "-50"] # "-unexpected-docstring"
+OPTS = ["-no-bin-annot"] # "-w", "-50"] # "-unexpected-docstring"
 
 #################
 ocaml_library(
@@ -27,6 +27,7 @@ ocaml_signature(
 ocaml_module(
     name   = "Zstd",
     struct = "zstd.ml",
+    sig    = ":Zstd_cmi",
     opts   = OPTS,
     deps   = [
         # "//stubs:zstd_stubs" # dune

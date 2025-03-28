@@ -33,7 +33,7 @@ opam.deps(
         "integers": ""
     },
 )
-use_repo(opam, "opam", "opam.ocamlsdk")
+use_repo(opam, "opam.ocamlsdk")
 use_repo(opam, "opam.integers")
 
 register_toolchains(
@@ -46,13 +46,11 @@ use_repo(opam, "opam.ctypes", "opam.ctypes-foreign")
 
 opam_dev = use_extension("@tools_opam//extensions:opam.bzl",
     "opam", dev_dependency = True)
+# enable 'bazel run @opam'
+use_repo(opam_dev, "opam")
+
 opam_dev.deps(
-    # debug = 2,
-    # verbosity = 2,
-    # opam_verbosity = 2,
-    pkgs = {
-        "extlib": "",
-    },
+    pkgs = {"extlib": ""},
     ocaml_version = OVERSION,
     opam_version = "2.3.0",
     toolchain = TOOLCHAIN
