@@ -1,0 +1,2 @@
+# utop:
+exports_files([".config/ocamlinit"])

@@ -11,8 +11,8 @@ bazel_dep(name = "bazel_skylib", version = "1.7.1")
 bazel_dep(name = "rules_cc",     version = "0.1.1")
 
 ## obazl:
-bazel_dep(name = "rules_ocaml", version = "3.0.0.dev")
-bazel_dep(name = "tools_opam",  version = "1.0.0.dev")
+bazel_dep(name = "rules_ocaml", version = "3.0.0.beta.1")
+bazel_dep(name = "tools_opam",  version = "1.0.0.beta.1")
 bazel_dep(name = "tools_obazl", version = "3.0.0.dev",
           repo_name = "obazl")
 
@@ -34,6 +34,7 @@ opam.deps(
     },
 )
 use_repo(opam, "opam.ocamlsdk")
+use_repo(opam, "opam.stublibs")
 use_repo(opam, "opam.integers")
 
 register_toolchains(
@@ -41,13 +42,11 @@ register_toolchains(
     "@opam.ocamlsdk//toolchain/profiles:all",
 )
 
-bazel_dep(name = "rules_ctypes", version = "0.23.0.dev")
+bazel_dep(name = "rules_ctypes", version = "0.23.0.beta.1")
 use_repo(opam, "opam.ctypes", "opam.ctypes-foreign")
 
 opam_dev = use_extension("@tools_opam//extensions:opam.bzl",
-    "opam", dev_dependency = True)
-# enable 'bazel run @opam'
-use_repo(opam_dev, "opam")
+                         "opam", dev_dependency = True)
 
 opam_dev.deps(
     pkgs = {"extlib": ""},
@@ -56,6 +55,24 @@ opam_dev.deps(
     toolchain = TOOLCHAIN
 )
 use_repo(opam_dev, "opam.extlib")
+
+# enable 'bazel run @opam'
+opam_dev.opam()
+use_repo(opam_dev, "opam")
+
+# enable 'bazel run @ocaml'
+opam_dev.ocaml()
+use_repo(opam_dev, "ocaml")
+
+# enable 'bazel run @utop'
+opam_dev.utop(version = "2.15.0-1",
+              # ocamlinit is optional:
+              ocamlinit = ".config/ocamlinit")
+use_repo(opam_dev, utop="opam.utop")
+
+# enable 'bazel run @dbg --@dbg//pgm=//pkg:tgt'
+opam_dev.dbg()
+use_repo(opam_dev, "dbg")
 
 #### PoC demo only. To use the a local system library,
 #### pass --//stubs:local
